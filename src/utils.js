@@ -9,7 +9,9 @@ export function c(...classNames) {
 export const exampleData = [
   {
     name: "Apple",
-    slideUrl: "https://www.slideteam.net/wp/wp-content/uploads/2021/12/Slide4-6-784x441.jpg",
+    slideUrls: [
+      "https://www.slideteam.net/wp/wp-content/uploads/2021/12/Slide4-6-784x441.jpg"
+    ],
     logoUrl: "https://upload.wikimedia.org/wikipedia/commons/a/ab/Apple-logo.png",
     facts: [
       "Founded in 1976",
@@ -18,18 +20,17 @@ export const exampleData = [
     ],
     foundingYear: 1976,
   },
-]
-
-export const exampleAnswer = [
   {
-    name: "Apple",
-    slideUrl: "https://www.slideteam.net/wp/wp-content/uploads/2021/12/Slide4-6-784x441.jpg",
+    name: "Google",
+    slideUrls: [
+      "https://www.slideteam.net/wp/wp-content/uploads/2021/12/Slide4-6-784x441.jpg"
+    ],
     logoUrl: "https://upload.wikimedia.org/wikipedia/commons/a/ab/Apple-logo.png",
     facts: [
-      "Founded in 1976",
-      "Steve Jobs and Steve Wozniak",
-      "First product: Apple I",
+      "Founded in 1998",
+      "Larry Page and Sergey Brin",
+      "First product: Google Search",
     ],
-    foundingYear: 1976,
+    foundingYear: 1998,
   },
 ]
