@@ -13,10 +13,15 @@ export default function Home() {
   return (
     <>
       <Head>
-        {/* <link
+        <link
           rel="icon"
-          href="/birbstreet-mascot-padded400w.png"
-        /> */}
+          href={
+            'data:image/svg+xml,' +
+            '<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22>' +
+            `<text y=%22.9em%22 font-size=%2290%22>🧐</text>` +
+            '</svg>'
+          }
+        />
         <title>foundle</title>
         <meta
           name="og:title"
@@ -33,7 +38,7 @@ export default function Home() {
       </Head>
       <div id="main" className="flex flex-col max-w-7xl mx-auto min-h-screen overflow-x-hidden content-center p-10">
         <div className="max-w-5xl mx-auto">
-          <h1 className="text-3xl font-semibold">🤓 foundle</h1>
+          <h1 className="text-3xl font-semibold">🧐 foundle</h1>
           {/* <p className="py-3">wordle for founders: guess the startup that the slide belongs to.</p> */}
         </div>
         <div className="divider"></div>
