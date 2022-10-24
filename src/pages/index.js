@@ -252,10 +252,10 @@ export default function Home({ foundleId, answerIndex, slideIndex }) {
           name="description"
           content="wordle for founders: guess the company whose pitch deck the slide belongs to"
         />
-        {/* <meta
+        <meta
           property="og:image"
-          content="/birbstreet-banner.png"
-        /> */}
+          content="/foundle-preview-image.jpg"
+        />
       </Head>
       <div
         id="main"
