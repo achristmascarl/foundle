@@ -10,7 +10,7 @@ import GuessResult from '../components/GuessResult';
 const foundleId = '123';
 const answerIndex = 1;
 const slideIndex = 0;
-const numGuesses = 5;
+const numGuesses = 6;
 const GuessStates = {
   Earlier: 'Too young',
   Later: 'Too old',
