@@ -6,7 +6,8 @@ const nextConfig = {
     // TODO: update domains for next
     domains: [
       'www.slideteam.net',
-      'upload.wikimedia.org'
+      'upload.wikimedia.org',
+      'research-assets.cbinsights.com'
     ],
   },
 }
