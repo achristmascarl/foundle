@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Image from 'next/future/image';
 import dynamic from 'next/dynamic';
+import { MongoClient } from 'mongodb'
 // import styles from '../styles/Home.module.css';
 import Select, { components } from 'react-select';
 import { c, companies } from '../utils';
@@ -10,11 +11,56 @@ import GuessResult from '../components/GuessResult';
 const ReactViewer = dynamic(
   () => import('react-viewer'),
   { ssr: false }
-)
+);
 
-const foundleId = '123';
-const answerIndex = 1;
-const slideIndex = 0;
+export async function getStaticProps(context) {
+  let foundleId = "0";
+  let answerIndex = 0;
+  let slideIndex = 0;
+
+  let url = process.env.MONGO_URL;
+  if (!url) {
+    throw new Error(
+      'Please define the MONGO_URL environment variable'
+    )
+  }
+  try {
+    const client = await MongoClient.connect(url);
+    // console.log(client);
+    const database = client.db("test");
+    const foundles = database.collection("foundles");
+    // console.log(foundles);
+    const date = new Date(Date.now());
+    date.setUTCHours(date.getUTCHours() - 4);
+    const utcString = date.toUTCString();
+    const utcDateId = utcString.split(' ').slice(1, 4).join('-');
+    const query = { utcDateId: utcDateId };
+    console.log(query);
+    const foundle = await foundles.findOne(query);
+    console.log(foundle);
+    if (foundle) {
+      if (foundle.foundleId) {
+        foundleId = foundle.foundleId;
+        answerIndex = foundle.answerIndex;
+        slideIndex = foundle.slideIndex;
+      }
+    }
+
+  } catch (err) {
+    console.log("error with mongodb: ");
+    console.log(err);
+    throw new Error(err)
+  }
+
+  return {
+    props: {
+      foundleId,
+      answerIndex,
+      slideIndex,
+    },
+    revalidate: 60,
+  }
+}
 const numGuesses = 6;
 const GuessStates = {
   Earlier: 'Too young',
@@ -30,7 +76,6 @@ const GuessEmojis = {
 }
 
 const Option = (props) => {
-  console.log(props);
   return (
     <div className="flex flex-row justify-start align-middle">
       <div
@@ -51,7 +96,7 @@ const Option = (props) => {
   );
 };
 
-export default function Home() {
+export default function Home({ foundleId, answerIndex, slideIndex }) {
   const [slideViewerVisible, setSlideViewerVisible] = useState(false);
   const [selectedOption, setSelectedOption] = useState(null);
   const [gameFinished, setGameFinished] = useState(false);
@@ -68,7 +113,6 @@ export default function Home() {
     const savedGameState = localStorage.getItem(`foundle-${foundleId}`);
     if (savedGameState) {
       const parsedGameState = JSON.parse(savedGameState);
-      console.log(parsedGameState);
       setGuesses(parsedGameState.guesses);
       setGameFinished(parsedGameState.gameFinished);
       setGameWon(parsedGameState.gameWon);
@@ -86,12 +130,12 @@ export default function Home() {
   // check to see if the game is finished
   useEffect(() => {
     if (gameWon && gameFinished) {
-      console.log('game finished, won');
+      // console.log('game finished, won');
       updateShareString(gameWon);
       setModalOpen(true);
       saveGame();
     } else if (gameFinished) {
-      console.log('game finished, lost');
+      // console.log('game finished, lost');
       updateShareString(gameWon);
       setModalOpen(true);
       saveGame();
@@ -128,14 +172,10 @@ export default function Home() {
   function handleGuess() {
     setProcessingGuess(true);
     const addingNewGuess = Array.from(guesses);
-    console.log(selectedOption);
-    console.log(addingNewGuess);
     let guessState;
     let guessEmoji;
     const correctFoundingYear = companies[answerIndex].foundingYear;
     const guessFoundingYear = selectedOption.foundingYear;
-
-    console.log(addingNewGuess);
     if (selectedOption.index === answerIndex) {
       guessState = GuessStates.Correct;
       guessEmoji = GuessEmojis.Correct;
@@ -179,7 +219,6 @@ export default function Home() {
     const currentDate = new Date(Date.now());
     utcDate.setUTCHours(utcDate.getUTCHours() + 24);
     utcDate.setUTCHours(4, 0, 0, 0);
-    // utcDate.setUTCHours(0, 0, 0, 0);
     const msTimeDiff = utcDate - currentDate;
     let seconds = Math.floor(msTimeDiff / 1000);
     let minutes = Math.floor(seconds / 60);
