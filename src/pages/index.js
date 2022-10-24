@@ -3,9 +3,14 @@ import Head from 'next/head';
 import Image from 'next/future/image';
 import dynamic from 'next/dynamic';
 // import styles from '../styles/Home.module.css';
-import Select from 'react-select';
+import Select, { components } from 'react-select';
 import { c, companies } from '../utils';
 import GuessResult from '../components/GuessResult';
+
+const ReactViewer = dynamic(
+  () => import('react-viewer'),
+  { ssr: false }
+)
 
 const foundleId = '123';
 const answerIndex = 1;
@@ -24,10 +29,27 @@ const GuessEmojis = {
   Correct: '✅',
 }
 
-const ReactViewer = dynamic(
-  () => import('react-viewer'),
-  { ssr: false }
-)
+const Option = (props) => {
+  console.log(props);
+  return (
+    <div className="flex flex-row justify-start align-middle">
+      <div
+        className='w-6 h-6 mx-2 my-auto'
+      >
+        <Image
+          src={props.data.iconUrl}
+          placeholder="empty"
+          alt="icon"
+          width="0"
+          height="0"
+          sizes="100vw"
+          style={{ width: '100%', height: 'auto' }}
+        />
+      </div>
+      <components.Option {...props} />
+    </div>
+  );
+};
 
 export default function Home() {
   const [slideViewerVisible, setSlideViewerVisible] = useState(false);
@@ -265,6 +287,7 @@ export default function Home() {
             defaultValue={null}
             value={selectedOption}
             onChange={setSelectedOption}
+            components={{ Option }}
             options={
               companies.map((company, index) => ({
                 value: company.name,

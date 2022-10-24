@@ -27,8 +27,7 @@ const GuessResult = memo(function GuessResult({ index, guesses, processingGuess 
               width="0"
               height="0"
               sizes="100vw"
-              style={{ width: '100%', height: 'auto', cursor: 'zoom-in' }}
-              onClick={() => setSlideViewerVisible(true)}
+              style={{ width: '100%', height: 'auto' }}
             />
           </div>
           <div className="p-2 flex-grow font-semibold">
