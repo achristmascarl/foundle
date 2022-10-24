@@ -3,13 +3,26 @@ import Head from 'next/head';
 import Image from 'next/future/image';
 import dynamic from 'next/dynamic';
 // import styles from '../styles/Home.module.css';
-import { c, companies } from '../utils';
 import Select from 'react-select';
+import { c, companies } from '../utils';
+import GuessResult from '../components/GuessResult';
 
 const foundleId = '123';
 const answerIndex = 1;
 const slideIndex = 0;
 const numGuesses = 5;
+const GuessStates = {
+  Earlier: 'Founded earlier',
+  Later: 'Founded later',
+  SameYear: 'Founded in the same Year',
+  Correct: 'Correct',
+};
+const GuessEmojis = {
+  Earlier: '⏪',
+  Later: '⏩',
+  SameYear: '🟨',
+  Correct: '✅',
+}
 
 const ReactViewer = dynamic(
   () => import('react-viewer'),
@@ -24,7 +37,7 @@ export default function Home() {
   const [guesses, setGuesses] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [showCopiedAlert, setShowCopiedAlert] = useState(false);
-  const [shareString, setShareString] = useState(`foundle ${foundleId} \n`);
+  const [shareString, setShareString] = useState(`foundle # ${foundleId} \n`);
   const [processingGuess, setProcessingGuess] = useState(false);
 
   // get game state from localStorage upon render
@@ -37,7 +50,6 @@ export default function Home() {
       setGameFinished(parsedGameState.gameFinished);
       setGameWon(parsedGameState.gameWon);
       if (parsedGameState.gameFinished) {
-        updateShareString(parsedGameState.gameWon);
         setModalOpen(true);
       }
     }
@@ -65,7 +77,14 @@ export default function Home() {
     } else {
       updatingShareString += `X/${numGuesses} \n`;
     }
-    updatingShareString += 'foundle.io';
+    for (let i = 0; i < numGuesses; i++) {
+      if (i >= guesses.length) {
+        updatingShareString += `⬜️`;
+      } else {
+        updatingShareString += `${guesses[i].emoji}`;
+      }
+    }
+    updatingShareString += ' \nfoundle.io';
     setShareString(updatingShareString);
   }
 
@@ -83,18 +102,40 @@ export default function Home() {
     const addingNewGuess = Array.from(guesses);
     console.log(selectedOption);
     console.log(addingNewGuess);
-    addingNewGuess.push(selectedOption.value);
+    let guessState;
+    let guessEmoji;
+    const correctFoundingYear = companies[answerIndex].foundingYear;
+    const guessFoundingYear = selectedOption.foundingYear;
+
     console.log(addingNewGuess);
-    setGuesses(addingNewGuess);
     if (selectedOption.index === answerIndex) {
+      guessState = GuessStates.Correct;
+      guessEmoji = GuessEmojis.Correct;
       setGameWon(true);
       setGameFinished(true);
-    } else if (addingNewGuess.length === numGuesses) {
+    } else if (guessFoundingYear === correctFoundingYear) {
+      guessState = GuessStates.SameYear;
+      guessEmoji = GuessEmojis.SameYear;
+    } else if (guessFoundingYear < correctFoundingYear) {
+      guessState = GuessStates.Later;
+      guessEmoji = GuessEmojis.Later;
+    } else {
+      guessState = GuessStates.Earlier;
+      guessEmoji = GuessEmojis.Earlier;
+    }
+    addingNewGuess.push({
+      name: selectedOption.name,
+      iconUrl: selectedOption.iconUrl,
+      guessState: guessState,
+      emoji: guessEmoji,
+    });
+    if (addingNewGuess.length === numGuesses) {
       setGameFinished(true);
     }
+    setGuesses(addingNewGuess);
     setSelectedOption(null);
-    setProcessingGuess(false);
     saveGame();
+    setTimeout(() => setProcessingGuess(false), 750);
   }
 
   function handleShareResults() {
@@ -102,7 +143,7 @@ export default function Home() {
     setShowCopiedAlert(true);
     setTimeout(() => {
       setShowCopiedAlert(false);
-    }, 2000)
+    }, 2500)
   }
 
   return (
@@ -124,14 +165,14 @@ export default function Home() {
         />
         <meta
           name="description"
-          content="wordle for founders: guess the startup that the slide belongs to"
+          content="wordle for founders: guess the company whose pitch deck the slide belongs to"
         />
         {/* <meta
           property="og:image"
           content="/birbstreet-banner.png"
         /> */}
       </Head>
-      <div id="main" className="flex flex-col max-w-7xl mx-auto min-h-screen overflow-x-hidden content-center p-10">
+      <div id="main" className="flex flex-col max-w-7xl mx-auto min-h-screen overflow-x-hidden content-center p-10 pt-3">
         <div className="toast toast-top toast-center w-full">
           {showCopiedAlert && (
             <div className="alert alert-info">
@@ -143,9 +184,9 @@ export default function Home() {
         </div>
         <div className="max-w-5xl mx-auto text-center">
           <h1 className="text-3xl font-semibold">🧐 foundle</h1>
-          <p className="py-3">wordle for founders: guess the startup whose pitch deck the slide belongs to.</p>
+          <p className="py-1">wordle for founders: guess the company whose pitch deck the slide belongs to.</p>
         </div>
-        <div className="divider"></div>
+        <div className="divider my-0"></div>
         <div className="max-w-xl w-full mx-auto text-center">
           <h3 className="py-3 text-lg">
             {gameFinished ? (
@@ -158,6 +199,28 @@ export default function Home() {
               "guess which company's pitch deck this slide is from!"
             )}
           </h3>
+          {gameFinished && (
+            <>
+              <button
+                className="btn mx-2 my-3"
+                onClick={() => setModalOpen(true)}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 mr-2">
+                  <path fillRule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 01.67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 11-.671-1.34l.041-.022zM12 9a.75.75 0 100-1.5.75.75 0 000 1.5z" clipRule="evenodd" />
+                </svg>
+                Info
+              </button>
+              <button
+                className="btn mx-2 my-3"
+                onClick={handleShareResults}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 mr-2">
+                  <path fillRule="evenodd" d="M15.75 4.5a3 3 0 11.825 2.066l-8.421 4.679a3.002 3.002 0 010 1.51l8.421 4.679a3 3 0 11-.729 1.31l-8.421-4.678a3 3 0 110-4.132l8.421-4.679a3 3 0 01-.096-.755z" clipRule="evenodd" />
+                </svg>
+                Share
+              </button>
+            </>
+          )}
           <Image
             src={companies[answerIndex].slideUrls[slideIndex]}
             placeholder="empty"
@@ -190,18 +253,15 @@ export default function Home() {
           />
           <button
             className="btn mx-auto my-3"
-            disabled={!selectedOption || gameFinished}
+            disabled={!selectedOption || gameFinished || processingGuess}
             onClick={handleGuess}
           >👆 Guess</button>
         </div>
         <div className="max-w-xl w-3/4 mx-auto text-center flex flex-col mt-3">
-          <h3 className="py-3 text-lg">results ({`${numGuesses - guesses.length}/${numGuesses} guesses remaining`})</h3>
-          <div className="w-full h-10 bg-gray-100 my-2 rounded-md"></div>
-          <div className="w-full h-10 bg-gray-100 my-2 rounded-md"></div>
-          <div className="w-full h-10 bg-gray-100 my-2 rounded-md"></div>
-          <div className="w-full h-10 bg-gray-100 my-2 rounded-md"></div>
-          <div className="w-full h-10 bg-gray-100 my-2 rounded-md"></div>
-          <div className="w-full h-10 bg-gray-100 my-2 rounded-md"></div>
+          <h3 className="py-3 text-lg">results {!gameFinished && `(${numGuesses - guesses.length}/${numGuesses} guesses remaining)`}</h3>
+          {[...Array(numGuesses)].map((x, i) =>
+            <GuessResult key={i} index={i} guesses={guesses} processingGuess={processingGuess} />
+          )}
         </div>
         <ReactViewer
           visible={slideViewerVisible}
