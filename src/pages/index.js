@@ -12,9 +12,9 @@ const answerIndex = 1;
 const slideIndex = 0;
 const numGuesses = 5;
 const GuessStates = {
-  Earlier: 'Founded earlier',
-  Later: 'Founded later',
-  SameYear: 'Founded in the same Year',
+  Earlier: 'Too young',
+  Later: 'Too old',
+  SameYear: 'Same age',
   Correct: 'Correct',
 };
 const GuessEmojis = {
@@ -39,6 +39,7 @@ export default function Home() {
   const [showCopiedAlert, setShowCopiedAlert] = useState(false);
   const [shareString, setShareString] = useState(`foundle # ${foundleId} \n`);
   const [processingGuess, setProcessingGuess] = useState(false);
+  const [countdownString, setCountdownString] = useState('');
 
   // get game state from localStorage upon render
   useEffect(() => {
@@ -53,6 +54,11 @@ export default function Home() {
         setModalOpen(true);
       }
     }
+  }, []);
+
+  // get countdown clock
+  useEffect(() => {
+    setInterval(() => getCountdownString(), 1000);
   }, []);
 
   // check to see if the game is finished
@@ -146,6 +152,24 @@ export default function Home() {
     }, 2500)
   }
 
+  function getCountdownString() {
+    const utcDate = new Date();
+    const currentDate = new Date(Date.now());
+    utcDate.setUTCHours(utcDate.getUTCHours() + 24);
+    utcDate.setUTCHours(4, 0, 0, 0);
+    // utcDate.setUTCHours(0, 0, 0, 0);
+    const msTimeDiff = utcDate - currentDate;
+    let seconds = Math.floor(msTimeDiff / 1000);
+    let minutes = Math.floor(seconds / 60);
+    let hours = Math.floor(minutes / 60);
+    seconds = seconds % 60;
+    minutes = minutes % 60;
+    const stringHours = hours < 10 ? `0${hours}` : `${hours}`;
+    const stringMinutes = minutes < 10 ? `0${minutes}` : `${minutes}`;
+    const stringSeconds = seconds < 10 ? `0${seconds}` : `${seconds}`;
+    setCountdownString(`${stringHours}:${stringMinutes}:${stringSeconds}`);
+  }
+
   return (
     <>
       <Head>
@@ -172,7 +196,10 @@ export default function Home() {
           content="/birbstreet-banner.png"
         /> */}
       </Head>
-      <div id="main" className="flex flex-col max-w-7xl mx-auto min-h-screen overflow-x-hidden content-center p-10 pt-3">
+      <div
+        id="main"
+        className="flex flex-col max-w-7xl mx-auto min-h-screen overflow-x-hidden content-center sm:p-10 p-3 pt-3"
+      >
         <div className="toast toast-top toast-center w-full">
           {showCopiedAlert && (
             <div className="alert alert-info">
@@ -232,7 +259,7 @@ export default function Home() {
             onClick={() => setSlideViewerVisible(true)}
           />
         </div>
-        <div className="max-w-lg w-3/4 mx-auto text-center flex flex-col mt-3">
+        <div className="max-w-lg sm:w-3/4 w-full mx-auto text-center flex flex-col mt-3">
           <h3 className="py-3 text-lg">select a company</h3>
           <Select
             defaultValue={null}
@@ -257,7 +284,7 @@ export default function Home() {
             onClick={handleGuess}
           >👆 Guess</button>
         </div>
-        <div className="max-w-xl w-3/4 mx-auto text-center flex flex-col mt-3">
+        <div className="max-w-xl sm:w-3/4 w-full mx-auto text-center flex flex-col mt-3">
           <h3 className="py-3 text-lg">results {!gameFinished && `(${numGuesses - guesses.length}/${numGuesses} guesses remaining)`}</h3>
           {[...Array(numGuesses)].map((x, i) =>
             <GuessResult key={i} index={i} guesses={guesses} processingGuess={processingGuess} />
@@ -299,6 +326,17 @@ export default function Home() {
                 `the pitch deck slide belongs to ${companies[answerIndex].name}.`
               )}
             </p>
+            <h4 className="text-base font-semibold">
+              fun facts:
+            </h4>
+            {companies[answerIndex].facts.map((fact, index) => {
+              return (
+                <p key={index} className="ml-2 py-1">
+                  {fact}
+                </p>
+              )
+            })}
+            <p className="py-4">time until next foundle: {countdownString}</p>
             <button
               className="btn mx-auto my-3"
               onClick={handleShareResults}
