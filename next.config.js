@@ -3,11 +3,8 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   images: {
-    // TODO: update domains for next
     domains: [
-      'www.slideteam.net',
-      'upload.wikimedia.org',
-      'research-assets.cbinsights.com'
+      'foundle.s3.amazonaws.com',
     ],
   },
 }

@@ -10,9 +10,9 @@ export const companies = [
   {
     name: "Apple",
     slideUrls: [
-      "https://www.slideteam.net/wp/wp-content/uploads/2021/12/Slide4-6-784x441.jpg"
+      "https://foundle.s3.amazonaws.com/slides/apple-slide-1.jpeg"
     ],
-    iconUrl: "https://upload.wikimedia.org/wikipedia/commons/a/ab/Apple-logo.png",
+    iconUrl: "https://foundle.s3.amazonaws.com/icons/apple-icon.png",
     facts: [
       "Founded in 1976",
       "Steve Jobs and Steve Wozniak",
@@ -23,9 +23,9 @@ export const companies = [
   {
     name: "Google",
     slideUrls: [
-      "https://research-assets.cbinsights.com/2018/07/24102145/Durant.png"
+      "https://foundle.s3.amazonaws.com/slides/google-slide-1.png"
     ],
-    iconUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Google-favicon-2015.png/640px-Google-favicon-2015.png",
+    iconUrl: "https://foundle.s3.amazonaws.com/icons/google-icon.png",
     facts: [
       "Founded in 1998",
       "Larry Page and Sergey Brin",
