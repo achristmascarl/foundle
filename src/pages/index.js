@@ -41,7 +41,12 @@ export async function getStaticProps(context) {
     if (foundle) {
       if (foundle.foundleId) {
         foundleId = foundle.foundleId;
+        slideIndex = foundle.slideIndex;
+      }
+      if (foundle.answerIndex) {
         answerIndex = foundle.answerIndex;
+      }
+      if (foundle.slideIndex) {
         slideIndex = foundle.slideIndex;
       }
     }
