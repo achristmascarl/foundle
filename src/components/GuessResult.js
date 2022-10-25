@@ -30,7 +30,7 @@ const GuessResult = memo(function GuessResult({ index, guesses, processingGuess 
               style={{ width: '100%', height: 'auto' }}
             />
           </div>
-          <div className="p-2 flex-grow font-semibold">
+          <div className="p-2 flex-grow font-semibold text-center">
             {guess.name}
           </div>
           <div className="p-2">

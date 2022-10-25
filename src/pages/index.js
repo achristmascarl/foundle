@@ -79,6 +79,11 @@ const GuessEmojis = {
   SameYear: '🟨',
   Correct: '✅',
 }
+const modalIDs = {
+  GameFinished: 'GameFinished',
+  Help: 'Help',
+  None: 'None',
+}
 
 const Option = ({ children, ...props }) => {
   return (
@@ -114,7 +119,7 @@ export default function Home({ foundleId, answerIndex, slideIndex }) {
   const [gameFinished, setGameFinished] = useState(false);
   const [gameWon, setGameWon] = useState(false);
   const [guesses, setGuesses] = useState([]);
-  const [modalOpen, setModalOpen] = useState(false);
+  const [modalOpenId, setModalOpenId] = useState(modalIDs.None);
   const [showCopiedAlert, setShowCopiedAlert] = useState(false);
   const [shareString, setShareString] = useState(`foundle # ${foundleId} \n`);
   const [processingGuess, setProcessingGuess] = useState(false);
@@ -129,7 +134,7 @@ export default function Home({ foundleId, answerIndex, slideIndex }) {
       setGameFinished(parsedGameState.gameFinished);
       setGameWon(parsedGameState.gameWon);
       if (parsedGameState.gameFinished) {
-        setModalOpen(true);
+        setModalOpenId(modalIDs.GameFinished);
       }
     }
   }, []);
@@ -144,12 +149,12 @@ export default function Home({ foundleId, answerIndex, slideIndex }) {
     if (gameWon && gameFinished) {
       // console.log('game finished, won');
       updateShareString(gameWon);
-      setModalOpen(true);
+      setModalOpenId(modalIDs.GameFinished);
       saveGame();
     } else if (gameFinished) {
       // console.log('game finished, lost');
       updateShareString(gameWon);
-      setModalOpen(true);
+      setModalOpenId(modalIDs.GameFinished);
       saveGame();
     }
   }, [gameFinished, gameWon]);
@@ -273,9 +278,9 @@ export default function Home({ foundleId, answerIndex, slideIndex }) {
         id="main"
         className="flex flex-col max-w-7xl mx-auto min-h-screen overflow-x-hidden content-center sm:p-10 p-3 pt-3"
       >
-        <div className="toast toast-top toast-center w-full">
+        <div className="toast toast-top toast-center w-full z-50">
           {showCopiedAlert && (
-            <div className="alert alert-info">
+            <div className="alert">
               <div>
                 <span>Copied results to clipboard.</span>
               </div>
@@ -283,7 +288,19 @@ export default function Home({ foundleId, answerIndex, slideIndex }) {
           )}
         </div>
         <div className="max-w-5xl mx-auto text-center">
-          <h1 className="text-3xl font-semibold">🧐 foundle</h1>
+          <div className="flex flex-row justify-center align-middle">
+            <h1 className="text-3xl font-semibold">🧐 foundle</h1>
+            <div className="tooltip tooltip-right" data-tip="Help">
+              <button
+                className="btn btn-circle ml-2 h-8 w-8 min-h-0 my-auto"
+                onClick={() => setModalOpenId(modalIDs.Help)}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+                  <path fillRule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm11.378-3.917c-.89-.777-2.366-.777-3.255 0a.75.75 0 01-.988-1.129c1.454-1.272 3.776-1.272 5.23 0 1.513 1.324 1.513 3.518 0 4.842a3.75 3.75 0 01-.837.552c-.676.328-1.028.774-1.028 1.152v.75a.75.75 0 01-1.5 0v-.75c0-1.279 1.06-2.107 1.875-2.502.182-.088.351-.199.503-.331.83-.727.83-1.857 0-2.584zM12 18a.75.75 0 100-1.5.75.75 0 000 1.5z" clipRule="evenodd" />
+                </svg>
+              </button>
+            </div>
+          </div>
           <p className="py-1">wordle for founders: guess the company whose pitch deck the slide belongs to.</p>
         </div>
         <div className="divider my-0"></div>
@@ -303,7 +320,7 @@ export default function Home({ foundleId, answerIndex, slideIndex }) {
             <>
               <button
                 className="btn mx-2 my-3"
-                onClick={() => setModalOpen(true)}
+                onClick={() => setModalOpenId(modalIDs.GameFinished)}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 mr-2">
                   <path fillRule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 01.67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 11-.671-1.34l.041-.022zM12 9a.75.75 0 100-1.5.75.75 0 000 1.5z" clipRule="evenodd" />
@@ -377,12 +394,18 @@ export default function Home({ foundleId, answerIndex, slideIndex }) {
           type="checkbox"
           id="game-finished-modal"
           className="modal-toggle"
-          checked={gameFinished && modalOpen}
-          onChange={() => setModalOpen(!modalOpen)}
+          checked={modalOpenId && modalOpenId === modalIDs.GameFinished}
+          onChange={() =>
+            setModalOpenId(
+              (modalOpenId === modalIDs.GameFinished)
+                ? modalIDs.None
+                : modalIDs.GameFinished
+            )
+          }
         />
         <label
           htmlFor="game-finished-modal"
-          className="modal cursor-pointer"
+          className="modal cursor-pointer z-40"
         >
           <label className="modal-box relative" htmlFor="">
             <label htmlFor="game-finished-modal" className="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
@@ -420,6 +443,127 @@ export default function Home({ foundleId, answerIndex, slideIndex }) {
               </svg>
               Share Results
             </button>
+          </label>
+        </label>
+        <input
+          type="checkbox"
+          id="help-modal"
+          className="modal-toggle"
+          checked={modalOpenId === modalIDs.Help}
+          onChange={() =>
+            setModalOpenId(
+              (modalOpenId === modalIDs.Help)
+                ? modalIDs.None
+                : modalIDs.Help
+            )
+          }
+        />
+        <label
+          htmlFor="help-modal"
+          className="modal cursor-pointer"
+        >
+          <label className="modal-box relative" htmlFor="">
+            <label htmlFor="help-modal" className="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
+            <h3 className="text-lg font-bold">
+              how to play
+            </h3>
+            <div className="divider my-0"></div>
+            <p className="py-2">
+              You have 6 chances to guess the company whose slide deck
+              is displayed.
+            </p>
+            <p className="py-2">
+              After each guess, if your answer was incorrect, you will
+              be given a hint about whether the company which is the
+              correct answer was founded before, after, or in the same
+              year as the company you guessed.
+            </p>
+            <div className="divider my-0"></div>
+            <h4 className="font-semibold">
+              examples
+            </h4>
+            <GuessResult
+              index={0}
+              guesses={[{
+                name: "Apple",
+                iconUrl: "https://foundle.s3.amazonaws.com/icons/apple-icon.png",
+                guessState: GuessStates.Later,
+                emoji: GuessEmojis.Later,
+              }]}
+              processingGuess={false}
+            />
+            <p className="py-2">
+              The company you chose, <span className="font-bold">Apple</span>,
+              is too old. The correct answer is a company founded later than Apple.
+            </p>
+            <GuessResult
+              index={0}
+              guesses={[{
+                name: "JD.com",
+                iconUrl: "https://foundle.s3.amazonaws.com/icon/3767cfcb-d264-43cd-9f62-c8ddaeb65741.png",
+                guessState: GuessStates.SameYear,
+                emoji: GuessEmojis.SameYear,
+              }]}
+              processingGuess={false}
+            />
+            <p className="py-2">
+              The company you chose, <span className="font-bold">JD.com</span>,
+              was founded in the same year as the company which is the correct answer.
+            </p>
+            <GuessResult
+              index={0}
+              guesses={[{
+                name: "Google",
+                iconUrl: "https://foundle.s3.amazonaws.com/icons/google-icon.png",
+                guessState: GuessStates.Correct,
+                emoji: GuessEmojis.Correct,
+              }]}
+              processingGuess={false}
+            />
+            <p className="py-2">
+              <span className="font-bold">Google</span> was
+              the correct answer!
+            </p>
+            <div className="divider my-0"></div>
+            <p className="py-2">
+              A new foundle will be available every 24 hours around
+              midnight UTC-4.
+            </p>
+            <div className="divider my-0"></div>
+            <h4 className="font-semibold">
+              disclaimers
+            </h4>
+            <p className="py-2">
+              The information used for the foundles is based on research
+              across sources like Wikipedia, Crunchbase, and Google Images.
+              Please let us know if any of the information or attributions
+              are incorrect!
+            </p>
+            <p className="py-2">
+              foundle was inspired by Wordle (created by <a
+                href="https://twitter.com/powerlanguish"
+                target="_blank"
+                rel="noreferrer"
+                className="text-blue-500"
+              >Josh Wardle</a>) and also Tradle (created by <a
+                href="https://twitter.com/ximoes"
+                target="_blank"
+                rel="noreferrer"
+                className="text-blue-500"
+              >@xiomoes</a>).
+            </p>
+            <div className="divider my-0"></div>
+            <a
+              className="btn mx-auto my-3"
+              href="mailto:chirp@birbstreet.com?subject=foundle%20feedback"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 mr-2">
+                <path fillRule="evenodd" d="M4.848 2.771A49.144 49.144 0 0112 2.25c2.43 0 4.817.178 7.152.52 1.978.292 3.348 2.024 3.348 3.97v6.02c0 1.946-1.37 3.678-3.348 3.97a48.901 48.901 0 01-3.476.383.39.39 0 00-.297.17l-2.755 4.133a.75.75 0 01-1.248 0l-2.755-4.133a.39.39 0 00-.297-.17 48.9 48.9 0 01-3.476-.384c-1.978-.29-3.348-2.024-3.348-3.97V6.741c0-1.946 1.37-3.68 3.348-3.97zM6.75 8.25a.75.75 0 01.75-.75h9a.75.75 0 010 1.5h-9a.75.75 0 01-.75-.75zm.75 2.25a.75.75 0 000 1.5H12a.75.75 0 000-1.5H7.5z" clipRule="evenodd" />
+              </svg>
+              Share Feedback
+            </a>
           </label>
         </label>
       </div>
