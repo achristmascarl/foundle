@@ -80,11 +80,14 @@ const GuessEmojis = {
   Correct: '✅',
 }
 
-const Option = (props) => {
+const Option = ({ children, ...props }) => {
   return (
-    <div className="flex flex-row justify-start align-middle">
+    <components.Option
+      {...props}
+      className="!flex flex-row justify-start align-middle"
+    >
       <div
-        className='w-6 h-6 mx-2 my-auto'
+        className='w-6 h-6'
       >
         <Image
           src={props.data.iconUrl}
@@ -96,8 +99,12 @@ const Option = (props) => {
           style={{ width: '100%', height: 'auto' }}
         />
       </div>
-      <components.Option {...props} />
-    </div>
+      <div
+        className="w-full text-center"
+      >
+        {children}
+      </div>
+    </components.Option>
   );
 };
 
