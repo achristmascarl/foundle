@@ -21,7 +21,7 @@ export async function getStaticProps(context) {
   let url = process.env.MONGO_URL;
   if (!url) {
     throw new Error(
-      'Please define the MONGO_URL environment variable'
+      'MONGO_URL environment variable undefined; did you prepend `railway run`?'
     )
   }
   try {
@@ -41,12 +41,15 @@ export async function getStaticProps(context) {
     if (foundle) {
       if (foundle.foundleId) {
         foundleId = foundle.foundleId;
-        slideIndex = foundle.slideIndex;
       }
-      if (foundle.answerIndex) {
+      if (foundle.answerIndex && foundle.answerIndex < companies.length) {
         answerIndex = foundle.answerIndex;
       }
-      if (foundle.slideIndex) {
+      if (
+        foundle.slideIndex &&
+        foundle.answerIndex < companies.length &&
+        foundle.slideIndex < companies[foundle.answerIndex].slidesUrls
+      ) {
         slideIndex = foundle.slideIndex;
       }
     }
@@ -267,7 +270,7 @@ export default function Home({ foundleId, answerIndex, slideIndex }) {
         />
         <meta
           name="description"
-          content="wordle for founders: guess the company whose pitch deck the slide belongs to"
+          content="guess the company whose pitch deck the slide belongs to"
         />
         <meta
           property="og:image"
@@ -288,7 +291,7 @@ export default function Home({ foundleId, answerIndex, slideIndex }) {
           )}
         </div>
         <div className="max-w-5xl mx-auto text-center">
-          <div className="flex flex-row justify-center align-middle">
+          <div className="flex flex-row justify-center align-middle mb-1">
             <h1 className="text-3xl font-semibold">🧐 foundle</h1>
             <div className="tooltip tooltip-right" data-tip="Help">
               <button
@@ -301,7 +304,6 @@ export default function Home({ foundleId, answerIndex, slideIndex }) {
               </button>
             </div>
           </div>
-          <p className="py-1">wordle for founders: guess the company whose pitch deck the slide belongs to.</p>
         </div>
         <div className="divider my-0"></div>
         <div className="max-w-xl w-full mx-auto text-center">
