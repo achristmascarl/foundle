@@ -531,6 +531,31 @@ export default function Home({ foundleId, answerIndex, slideIndex }) {
               A new foundle will be available every 24 hours around
               midnight UTC-4.
             </p>
+            <p className="py-2">
+              created by carl from <a
+                href="https://www.birbstreet.com/"
+                target="_blank"
+                rel="noreferrer"
+                className="text-blue-500"
+              >birb street</a>.
+              contributions from <a
+                href="https://twitter.com/chrischerian"
+                target="_blank"
+                rel="noreferrer"
+                className="text-blue-500"
+              >chris cherian</a>.
+            </p>
+            <a
+              className="btn mx-auto my-3"
+              href="mailto:chirp@birbstreet.com?subject=foundle%20feedback"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 mr-2">
+                <path fillRule="evenodd" d="M4.848 2.771A49.144 49.144 0 0112 2.25c2.43 0 4.817.178 7.152.52 1.978.292 3.348 2.024 3.348 3.97v6.02c0 1.946-1.37 3.678-3.348 3.97a48.901 48.901 0 01-3.476.383.39.39 0 00-.297.17l-2.755 4.133a.75.75 0 01-1.248 0l-2.755-4.133a.39.39 0 00-.297-.17 48.9 48.9 0 01-3.476-.384c-1.978-.29-3.348-2.024-3.348-3.97V6.741c0-1.946 1.37-3.68 3.348-3.97zM6.75 8.25a.75.75 0 01.75-.75h9a.75.75 0 010 1.5h-9a.75.75 0 01-.75-.75zm.75 2.25a.75.75 0 000 1.5H12a.75.75 0 000-1.5H7.5z" clipRule="evenodd" />
+              </svg>
+              Share Feedback
+            </a>
             <div className="divider my-0"></div>
             <h4 className="font-semibold">
               disclaimers
@@ -554,18 +579,6 @@ export default function Home({ foundleId, answerIndex, slideIndex }) {
                 className="text-blue-500"
               >@xiomoes</a>).
             </p>
-            <div className="divider my-0"></div>
-            <a
-              className="btn mx-auto my-3"
-              href="mailto:chirp@birbstreet.com?subject=foundle%20feedback"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 mr-2">
-                <path fillRule="evenodd" d="M4.848 2.771A49.144 49.144 0 0112 2.25c2.43 0 4.817.178 7.152.52 1.978.292 3.348 2.024 3.348 3.97v6.02c0 1.946-1.37 3.678-3.348 3.97a48.901 48.901 0 01-3.476.383.39.39 0 00-.297.17l-2.755 4.133a.75.75 0 01-1.248 0l-2.755-4.133a.39.39 0 00-.297-.17 48.9 48.9 0 01-3.476-.384c-1.978-.29-3.348-2.024-3.348-3.97V6.741c0-1.946 1.37-3.68 3.348-3.97zM6.75 8.25a.75.75 0 01.75-.75h9a.75.75 0 010 1.5h-9a.75.75 0 01-.75-.75zm.75 2.25a.75.75 0 000 1.5H12a.75.75 0 000-1.5H7.5z" clipRule="evenodd" />
-              </svg>
-              Share Feedback
-            </a>
           </label>
         </label>
       </div>
