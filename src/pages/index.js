@@ -3,11 +3,11 @@ import Head from 'next/head';
 import Image from 'next/future/image';
 import dynamic from 'next/dynamic';
 import { MongoClient } from 'mongodb'
-// import styles from '../styles/Home.module.css';
 import Select, { components } from 'react-select';
 import { c, companies } from '../utils';
 import GuessResult from '../components/GuessResult';
-import { data } from 'autoprefixer';
+import FoundleCountdown from '../components/FoundleCountdown';
+// import styles from '../styles/Home.module.css';
 
 const ReactViewer = dynamic(
   () => import('react-viewer'),
@@ -130,7 +130,6 @@ export default function Home({ foundleId, answerIndex, slideIndex }) {
   const [showCopiedAlert, setShowCopiedAlert] = useState(false);
   const [shareString, setShareString] = useState(`foundle # ${foundleId} \n`);
   const [processingGuess, setProcessingGuess] = useState(false);
-  const [countdownString, setCountdownString] = useState('');
 
   // get game state from localStorage upon render
   useEffect(() => {
@@ -144,11 +143,6 @@ export default function Home({ foundleId, answerIndex, slideIndex }) {
         setModalOpenId(modalIDs.GameFinished);
       }
     }
-  }, []);
-
-  // get countdown clock
-  useEffect(() => {
-    setInterval(() => getCountdownString(), 1000);
   }, []);
 
   // check to see if the game is finished
@@ -236,23 +230,6 @@ export default function Home({ foundleId, answerIndex, slideIndex }) {
     setTimeout(() => {
       setShowCopiedAlert(false);
     }, 2500)
-  }
-
-  function getCountdownString() {
-    const utcDate = new Date();
-    const currentDate = new Date(Date.now());
-    utcDate.setUTCHours(utcDate.getUTCHours() + 20);
-    utcDate.setUTCHours(4, 0, 0, 0);
-    const msTimeDiff = utcDate - currentDate;
-    let seconds = Math.floor(msTimeDiff / 1000);
-    let minutes = Math.floor(seconds / 60);
-    let hours = Math.floor(minutes / 60);
-    seconds = seconds % 60;
-    minutes = minutes % 60;
-    const stringHours = hours < 10 ? `0${hours}` : `${hours}`;
-    const stringMinutes = minutes < 10 ? `0${minutes}` : `${minutes}`;
-    const stringSeconds = seconds < 10 ? `0${seconds}` : `${seconds}`;
-    setCountdownString(`${stringHours}:${stringMinutes}:${stringSeconds}`);
   }
 
   return (
@@ -453,7 +430,7 @@ export default function Home({ foundleId, answerIndex, slideIndex }) {
                 </p>
               )
             })}
-            <p className="py-4">time until next foundle: {countdownString}</p>
+            <p className="py-4">time until next foundle: <FoundleCountdown /></p>
             <button
               className="btn mx-auto my-3"
               onClick={handleShareResults}
