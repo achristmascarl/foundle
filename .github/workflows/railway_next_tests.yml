@@ -8,7 +8,7 @@ on:
 
 jobs:
   test:
-    name: run tests
+    name: railway run next tests
     runs-on: ubuntu-latest
 
     strategy:
