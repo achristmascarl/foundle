@@ -4,7 +4,7 @@ import Image from 'next/future/image';
 import dynamic from 'next/dynamic';
 import { MongoClient } from 'mongodb'
 import Select, { components } from 'react-select';
-import { c, companies } from '../utils';
+import { c, track, companies } from '../utils';
 import GuessResult from '../components/GuessResult';
 import FoundleCountdown from '../components/FoundleCountdown';
 import { placeholderSquareTinyBase64 } from '../../public/blurImages';
@@ -203,20 +203,25 @@ export default function Home({ foundleId, answerIndex, slideIndex }) {
     let guessEmoji;
     const correctFoundingYear = companies[answerIndex].foundingYear;
     const guessFoundingYear = selectedOption.foundingYear;
+    track(`guessed_${selectedOption.name}`, "game_state", `guess_${addingNewGuess.length + 1}_${selectedOption.name}`);
     if (selectedOption.index === answerIndex) {
       guessState = GuessStates.Correct;
       guessEmoji = GuessEmojis.Correct;
       setGameWon(true);
       setGameFinished(true);
+      track("game_won", "game_state", `game_won_${addingNewGuess.length + 1}`);
     } else if (guessFoundingYear === correctFoundingYear) {
       guessState = GuessStates.SameYear;
       guessEmoji = GuessEmojis.SameYear;
+      track("guessed_same_year", "game_state", `guess_${addingNewGuess.length + 1}_same_year`);
     } else if (guessFoundingYear < correctFoundingYear) {
       guessState = GuessStates.Later;
       guessEmoji = GuessEmojis.Later;
+      track("guessed_older", "game_state", `guess_${addingNewGuess.length + 1}_older`);
     } else {
       guessState = GuessStates.Earlier;
       guessEmoji = GuessEmojis.Earlier;
+      track("guessed_younger", "game_state", `guess_${addingNewGuess.length + 1}_younger`);
     }
     addingNewGuess.push({
       name: selectedOption.name,
@@ -226,6 +231,7 @@ export default function Home({ foundleId, answerIndex, slideIndex }) {
     });
     if (addingNewGuess.length === numGuesses) {
       setGameFinished(true);
+      track("game_lost", "game_state", "game_lost");
     }
     setGuesses(addingNewGuess);
     setSelectedOption(null);
@@ -239,6 +245,7 @@ export default function Home({ foundleId, answerIndex, slideIndex }) {
     setTimeout(() => {
       setShowCopiedAlert(false);
     }, 2500)
+    track("click_share_results", "button_click", "share_results");
   }
 
   return (
@@ -286,7 +293,10 @@ export default function Home({ foundleId, answerIndex, slideIndex }) {
             <div className="tooltip tooltip-right" data-tip="Help">
               <button
                 className="btn btn-circle ml-2 h-8 w-8 min-h-0 my-auto"
-                onClick={() => setModalOpenId(modalIDs.Help)}
+                onClick={() => {
+                  setModalOpenId(modalIDs.Help);
+                  track("click_help", "button_click", "help");
+                }}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
                   <path fillRule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm11.378-3.917c-.89-.777-2.366-.777-3.255 0a.75.75 0 01-.988-1.129c1.454-1.272 3.776-1.272 5.23 0 1.513 1.324 1.513 3.518 0 4.842a3.75 3.75 0 01-.837.552c-.676.328-1.028.774-1.028 1.152v.75a.75.75 0 01-1.5 0v-.75c0-1.279 1.06-2.107 1.875-2.502.182-.088.351-.199.503-.331.83-.727.83-1.857 0-2.584zM12 18a.75.75 0 100-1.5.75.75 0 000 1.5z" clipRule="evenodd" />
