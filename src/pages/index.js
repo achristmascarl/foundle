@@ -7,6 +7,7 @@ import Select, { components } from 'react-select';
 import { c, companies } from '../utils';
 import GuessResult from '../components/GuessResult';
 import FoundleCountdown from '../components/FoundleCountdown';
+import { placeholderWideBase64, placeholderSquareBase64 } from '../../public/blurImages';
 // import styles from '../styles/Home.module.css';
 
 const ReactViewer = dynamic(
@@ -103,7 +104,8 @@ const Option = ({ children, ...props }) => {
       >
         <Image
           src={props.data.iconUrl}
-          placeholder="empty"
+          placeholder="blur"
+          blurDataURL={placeholderSquareBase64}
           alt="icon"
           width="0"
           height="0"
@@ -333,7 +335,8 @@ export default function Home({ foundleId, answerIndex, slideIndex }) {
           )}
           <Image
             src={companies[answerIndex].slideUrls[slideIndex]}
-            placeholder="empty"
+            placeholder="blur"
+            blurDataURL={placeholderWideBase64}
             alt="slide deck image"
             width="0"
             height="0"

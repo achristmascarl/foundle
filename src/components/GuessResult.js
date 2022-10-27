@@ -1,6 +1,7 @@
 import { memo } from 'react';
 import Image from 'next/future/image';
 import { c } from "../utils";
+import { placeholderSquareBase64 } from '../../public/blurImages';
 
 const GuessResult = memo(function GuessResult({ index, guesses, processingGuess }) {
   const guess = guesses[index];
@@ -22,7 +23,8 @@ const GuessResult = memo(function GuessResult({ index, guesses, processingGuess 
           >
             <Image
               src={guess.iconUrl}
-              placeholder="empty"
+              placeholder="blur"
+              blurDataURL={placeholderSquareBase64}
               alt="icon"
               width="0"
               height="0"
