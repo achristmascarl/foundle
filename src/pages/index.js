@@ -472,7 +472,7 @@ export default function Home({ foundleId, answerIndex, slideIndex }) {
               )
             })}
             <p className="py-4">time until next foundle: <FoundleCountdown /></p>
-            <div className="w-full flex flex-row space-between">
+            <div className="w-full flex flex-col sm:flex-row space-between">
               <button
                 className="btn mx-auto my-3"
                 onClick={handleShareResults}
