@@ -7,7 +7,7 @@ import Select, { components } from 'react-select';
 import { c, companies } from '../utils';
 import GuessResult from '../components/GuessResult';
 import FoundleCountdown from '../components/FoundleCountdown';
-import { placeholderWideBase64, placeholderSquareBase64 } from '../../public/blurImages';
+import { placeholderSquareTinyBase64 } from '../../public/blurImages';
 // import styles from '../styles/Home.module.css';
 
 const ReactViewer = dynamic(
@@ -105,10 +105,10 @@ const Option = ({ children, ...props }) => {
         <Image
           src={props.data.iconUrl}
           placeholder="blur"
-          blurDataURL={placeholderSquareBase64}
+          blurDataURL={placeholderSquareTinyBase64}
           alt="icon"
-          width="0"
-          height="0"
+          width="24"
+          height="24"
           sizes="100vw"
           style={{ width: '100%', height: 'auto' }}
         />
@@ -146,6 +146,13 @@ export default function Home({ foundleId, answerIndex, slideIndex }) {
       }
     }
   }, []);
+
+  // save game when guesses change
+  useEffect(() => {
+    if (guesses.length > 0) {
+      saveGame();
+    }
+  }, [guesses]);
 
   // check to see if the game is finished
   useEffect(() => {
@@ -336,10 +343,10 @@ export default function Home({ foundleId, answerIndex, slideIndex }) {
           <Image
             src={companies[answerIndex].slideUrls[slideIndex]}
             placeholder="blur"
-            blurDataURL={placeholderWideBase64}
+            blurDataURL={placeholderSquareTinyBase64}
             alt="slide deck image"
-            width="0"
-            height="0"
+            width="250"
+            height="250"
             sizes="100vw"
             style={{ width: '100%', height: 'auto', cursor: 'zoom-in' }}
             onClick={() => setSlideViewerVisible(true)}
