@@ -345,8 +345,8 @@ export default function Home({ foundleId, answerIndex, slideIndex }) {
             placeholder="blur"
             blurDataURL={placeholderSquareTinyBase64}
             alt="slide deck image"
-            width="250"
-            height="250"
+            width="300"
+            height="200"
             sizes="100vw"
             style={{ width: '100%', height: 'auto', cursor: 'zoom-in' }}
             onClick={() => setSlideViewerVisible(true)}
