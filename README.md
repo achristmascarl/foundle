@@ -1,4 +1,4 @@
-# foundle
+# 🧐 foundle
 wordle for founders: guess the startup whose pitch deck the slide is from
 
 ## getting start with railway cli
