@@ -7,6 +7,7 @@ import { MongoClient } from 'mongodb'
 import Select, { components } from 'react-select';
 import { c, companies } from '../utils';
 import GuessResult from '../components/GuessResult';
+import { data } from 'autoprefixer';
 
 const ReactViewer = dynamic(
   () => import('react-viewer'),
@@ -87,6 +88,9 @@ const modalIDs = {
   Help: 'Help',
   None: 'None',
 }
+const referralParams = "utm_source=foundle&utm_medium=referral&utm_campaign=page_links";
+const answerParams = "utm_source=foundle&utm_medium=referral&utm_campaign=answer_website";
+// const sponsorParams = "utm_source=foundle&utm_medium=paid&utm_campaign=foundle_sponsorship";
 
 const Option = ({ children, ...props }) => {
   return (
@@ -108,7 +112,7 @@ const Option = ({ children, ...props }) => {
         />
       </div>
       <div
-        className="w-full text-center"
+        className="flex-grow text-center"
       >
         {children}
       </div>
@@ -245,6 +249,7 @@ export default function Home({ foundleId, answerIndex, slideIndex }) {
     let hours = Math.floor(minutes / 60);
     seconds = seconds % 60;
     minutes = minutes % 60;
+    hours = hours % 24;
     const stringHours = hours < 10 ? `0${hours}` : `${hours}`;
     const stringMinutes = minutes < 10 ? `0${minutes}` : `${minutes}`;
     const stringSeconds = seconds < 10 ? `0${seconds}` : `${seconds}`;
@@ -352,7 +357,13 @@ export default function Home({ foundleId, answerIndex, slideIndex }) {
           />
         </div>
         <div className="max-w-lg sm:w-3/4 w-full mx-auto text-center flex flex-col mt-3">
-          <h3 className="py-3 text-lg">select a company</h3>
+          <h3 className="py-3 text-lg">
+            {gameFinished ? (
+              "tune in tomorrow for a new game :)"
+            ) : (
+              "select a company"
+            )}
+          </h3>
           <Select
             defaultValue={null}
             value={selectedOption}
@@ -364,6 +375,7 @@ export default function Home({ foundleId, answerIndex, slideIndex }) {
                 label: company.name,
                 index: index,
                 name: company.name,
+                websiteUrl: company.websiteUrl,
                 iconUrl: company.iconUrl,
                 facts: company.facts,
                 foundingYear: company.foundingYear,
@@ -423,7 +435,14 @@ export default function Home({ foundleId, answerIndex, slideIndex }) {
                 `the pitch deck slide was from ${companies[answerIndex].name}.`
               ) : (
                 `the pitch deck slide belongs to ${companies[answerIndex].name}.`
-              )}
+              )} (<a
+                href={`${companies[answerIndex].websiteUrl}?${answerParams}`}
+                target="_blank"
+                rel="noreferrer"
+                className="text-blue-500"
+              >
+                website
+              </a>)
             </p>
             <h4 className="text-base font-semibold">
               fun facts:
@@ -533,7 +552,7 @@ export default function Home({ foundleId, answerIndex, slideIndex }) {
             </p>
             <p className="py-2">
               created by carl from <a
-                href="https://www.birbstreet.com/"
+                href={`https://www.birbstreet.com/?${referralParams}`}
                 target="_blank"
                 rel="noreferrer"
                 className="text-blue-500"
