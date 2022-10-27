@@ -241,7 +241,7 @@ export default function Home({ foundleId, answerIndex, slideIndex }) {
   function getCountdownString() {
     const utcDate = new Date();
     const currentDate = new Date(Date.now());
-    utcDate.setUTCHours(utcDate.getUTCHours() + 24);
+    utcDate.setUTCHours(utcDate.getUTCHours() + 20);
     utcDate.setUTCHours(4, 0, 0, 0);
     const msTimeDiff = utcDate - currentDate;
     let seconds = Math.floor(msTimeDiff / 1000);
@@ -249,7 +249,6 @@ export default function Home({ foundleId, answerIndex, slideIndex }) {
     let hours = Math.floor(minutes / 60);
     seconds = seconds % 60;
     minutes = minutes % 60;
-    hours = hours % 24;
     const stringHours = hours < 10 ? `0${hours}` : `${hours}`;
     const stringMinutes = minutes < 10 ? `0${minutes}` : `${minutes}`;
     const stringSeconds = seconds < 10 ? `0${seconds}` : `${seconds}`;
@@ -449,7 +448,7 @@ export default function Home({ foundleId, answerIndex, slideIndex }) {
             </h4>
             {companies[answerIndex].facts.map((fact, index) => {
               return (
-                <p key={index} className="ml-2 py-1">
+                <p key={index} className="ml-2 my-2">
                   {fact}
                 </p>
               )
