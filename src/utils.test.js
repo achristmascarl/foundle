@@ -10,6 +10,8 @@ test('companies basic data valid', () => {
   companies.forEach(company => {
     expect(company.name).toBeTruthy();
     expect(company.name.length).toBeGreaterThan(0);
+    expect(company.websiteUrl).toBeTruthy();
+    expect(company.websiteUrl.length).toBeGreaterThan(0);
     expect(company.iconUrl).toBeTruthy();
     expect(company.iconUrl.length).toBeGreaterThan(0);
     expect(company.foundingYear).toBeTruthy();

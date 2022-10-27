@@ -3,10 +3,11 @@ import Head from 'next/head';
 import Image from 'next/future/image';
 import dynamic from 'next/dynamic';
 import { MongoClient } from 'mongodb'
-// import styles from '../styles/Home.module.css';
 import Select, { components } from 'react-select';
 import { c, companies } from '../utils';
 import GuessResult from '../components/GuessResult';
+import FoundleCountdown from '../components/FoundleCountdown';
+// import styles from '../styles/Home.module.css';
 
 const ReactViewer = dynamic(
   () => import('react-viewer'),
@@ -87,6 +88,9 @@ const modalIDs = {
   Help: 'Help',
   None: 'None',
 }
+const referralParams = "utm_source=foundle&utm_medium=referral&utm_campaign=page_links";
+const answerParams = "utm_source=foundle&utm_medium=referral&utm_campaign=answer_website";
+// const sponsorParams = "utm_source=foundle&utm_medium=paid&utm_campaign=foundle_sponsorship";
 
 const Option = ({ children, ...props }) => {
   return (
@@ -108,7 +112,7 @@ const Option = ({ children, ...props }) => {
         />
       </div>
       <div
-        className="w-full text-center"
+        className="flex-grow text-center"
       >
         {children}
       </div>
@@ -126,7 +130,6 @@ export default function Home({ foundleId, answerIndex, slideIndex }) {
   const [showCopiedAlert, setShowCopiedAlert] = useState(false);
   const [shareString, setShareString] = useState(`foundle # ${foundleId} \n`);
   const [processingGuess, setProcessingGuess] = useState(false);
-  const [countdownString, setCountdownString] = useState('');
 
   // get game state from localStorage upon render
   useEffect(() => {
@@ -140,11 +143,6 @@ export default function Home({ foundleId, answerIndex, slideIndex }) {
         setModalOpenId(modalIDs.GameFinished);
       }
     }
-  }, []);
-
-  // get countdown clock
-  useEffect(() => {
-    setInterval(() => getCountdownString(), 1000);
   }, []);
 
   // check to see if the game is finished
@@ -234,23 +232,6 @@ export default function Home({ foundleId, answerIndex, slideIndex }) {
     }, 2500)
   }
 
-  function getCountdownString() {
-    const utcDate = new Date();
-    const currentDate = new Date(Date.now());
-    utcDate.setUTCHours(utcDate.getUTCHours() + 24);
-    utcDate.setUTCHours(4, 0, 0, 0);
-    const msTimeDiff = utcDate - currentDate;
-    let seconds = Math.floor(msTimeDiff / 1000);
-    let minutes = Math.floor(seconds / 60);
-    let hours = Math.floor(minutes / 60);
-    seconds = seconds % 60;
-    minutes = minutes % 60;
-    const stringHours = hours < 10 ? `0${hours}` : `${hours}`;
-    const stringMinutes = minutes < 10 ? `0${minutes}` : `${minutes}`;
-    const stringSeconds = seconds < 10 ? `0${seconds}` : `${seconds}`;
-    setCountdownString(`${stringHours}:${stringMinutes}:${stringSeconds}`);
-  }
-
   return (
     <>
       <Head>
@@ -309,11 +290,21 @@ export default function Home({ foundleId, answerIndex, slideIndex }) {
         <div className="max-w-xl w-full mx-auto text-center">
           <h3 className="py-3 text-lg">
             {gameFinished ? (
-              gameWon ? (
-                `🎉 you won! the pitch deck slide was from ${companies[answerIndex].name}.`
-              ) : (
-                `maybe next time 😢 the pitch deck slide belongs to ${companies[answerIndex].name}.`
-              )
+              <>
+                {gameWon ? (
+                  `🎉 you won! the pitch deck slide was from `
+                ) : (
+                  `maybe next time 😢 the pitch deck slide belongs to `
+                )}
+                <a
+                  href={`${companies[answerIndex].websiteUrl}?${answerParams}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-blue-500"
+                >
+                  {companies[answerIndex].name}
+                </a>
+              </>
             ) : (
               "guess which company's pitch deck this slide is from!"
             )}
@@ -322,21 +313,21 @@ export default function Home({ foundleId, answerIndex, slideIndex }) {
             <>
               <button
                 className="btn mx-2 my-3"
-                onClick={() => setModalOpenId(modalIDs.GameFinished)}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 mr-2">
-                  <path fillRule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 01.67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 11-.671-1.34l.041-.022zM12 9a.75.75 0 100-1.5.75.75 0 000 1.5z" clipRule="evenodd" />
-                </svg>
-                Info
-              </button>
-              <button
-                className="btn mx-2 my-3"
                 onClick={handleShareResults}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 mr-2">
                   <path fillRule="evenodd" d="M15.75 4.5a3 3 0 11.825 2.066l-8.421 4.679a3.002 3.002 0 010 1.51l8.421 4.679a3 3 0 11-.729 1.31l-8.421-4.678a3 3 0 110-4.132l8.421-4.679a3 3 0 01-.096-.755z" clipRule="evenodd" />
                 </svg>
-                Share
+                Share Results
+              </button>
+              <button
+                className="btn mx-2 my-3"
+                onClick={() => setModalOpenId(modalIDs.GameFinished)}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 mr-2">
+                  <path fillRule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 01.67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 11-.671-1.34l.041-.022zM12 9a.75.75 0 100-1.5.75.75 0 000 1.5z" clipRule="evenodd" />
+                </svg>
+                Answer
               </button>
             </>
           )}
@@ -352,7 +343,13 @@ export default function Home({ foundleId, answerIndex, slideIndex }) {
           />
         </div>
         <div className="max-w-lg sm:w-3/4 w-full mx-auto text-center flex flex-col mt-3">
-          <h3 className="py-3 text-lg">select a company</h3>
+          <h3 className="py-3 text-lg">
+            {gameFinished ? (
+              "tune in tomorrow for a new game :)"
+            ) : (
+              "select a company"
+            )}
+          </h3>
           <Select
             defaultValue={null}
             value={selectedOption}
@@ -364,6 +361,7 @@ export default function Home({ foundleId, answerIndex, slideIndex }) {
                 label: company.name,
                 index: index,
                 name: company.name,
+                websiteUrl: company.websiteUrl,
                 iconUrl: company.iconUrl,
                 facts: company.facts,
                 foundingYear: company.foundingYear,
@@ -383,6 +381,21 @@ export default function Home({ foundleId, answerIndex, slideIndex }) {
             <GuessResult key={i} index={i} guesses={guesses} processingGuess={processingGuess} />
           )}
         </div>
+        <div className="divider"></div>
+        <p className="p-0 text-center">
+          created by carl from <a
+            href={`https://www.birbstreet.com/?${referralParams}`}
+            target="_blank"
+            rel="noreferrer"
+            className="text-blue-500"
+          >birb street</a> with
+          contributions from <a
+            href="https://twitter.com/chrischerian"
+            target="_blank"
+            rel="noreferrer"
+            className="text-blue-500"
+          >chris cherian</a>.
+        </p>
         <ReactViewer
           visible={slideViewerVisible}
           onClose={() => setSlideViewerVisible(false)}
@@ -419,32 +432,48 @@ export default function Home({ foundleId, answerIndex, slideIndex }) {
               )}
             </h3>
             <p className="py-4">
-              {gameWon ? (
-                `the pitch deck slide was from ${companies[answerIndex].name}.`
-              ) : (
-                `the pitch deck slide belongs to ${companies[answerIndex].name}.`
-              )}
+              the answer was <a
+                href={`${companies[answerIndex].websiteUrl}?${answerParams}`}
+                target="_blank"
+                rel="noreferrer"
+                className="text-blue-500"
+              >
+                {companies[answerIndex].name}
+              </a>.
             </p>
             <h4 className="text-base font-semibold">
               fun facts:
             </h4>
             {companies[answerIndex].facts.map((fact, index) => {
               return (
-                <p key={index} className="ml-2 py-1">
+                <p key={index} className="ml-2 my-2">
                   {fact}
                 </p>
               )
             })}
-            <p className="py-4">time until next foundle: {countdownString}</p>
-            <button
-              className="btn mx-auto my-3"
-              onClick={handleShareResults}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 mr-2">
-                <path fillRule="evenodd" d="M15.75 4.5a3 3 0 11.825 2.066l-8.421 4.679a3.002 3.002 0 010 1.51l8.421 4.679a3 3 0 11-.729 1.31l-8.421-4.678a3 3 0 110-4.132l8.421-4.679a3 3 0 01-.096-.755z" clipRule="evenodd" />
-              </svg>
-              Share Results
-            </button>
+            <p className="py-4">time until next foundle: <FoundleCountdown /></p>
+            <div className="w-full flex flex-row space-between">
+              <button
+                className="btn mx-auto my-3"
+                onClick={handleShareResults}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 mr-2">
+                  <path fillRule="evenodd" d="M15.75 4.5a3 3 0 11.825 2.066l-8.421 4.679a3.002 3.002 0 010 1.51l8.421 4.679a3 3 0 11-.729 1.31l-8.421-4.678a3 3 0 110-4.132l8.421-4.679a3 3 0 01-.096-.755z" clipRule="evenodd" />
+                </svg>
+                Share Results
+              </button>
+              <a
+                className="btn mx-auto my-3"
+                href="mailto:chirp@birbstreet.com?subject=foundle%20feedback"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 mr-2">
+                  <path fillRule="evenodd" d="M4.848 2.771A49.144 49.144 0 0112 2.25c2.43 0 4.817.178 7.152.52 1.978.292 3.348 2.024 3.348 3.97v6.02c0 1.946-1.37 3.678-3.348 3.97a48.901 48.901 0 01-3.476.383.39.39 0 00-.297.17l-2.755 4.133a.75.75 0 01-1.248 0l-2.755-4.133a.39.39 0 00-.297-.17 48.9 48.9 0 01-3.476-.384c-1.978-.29-3.348-2.024-3.348-3.97V6.741c0-1.946 1.37-3.68 3.348-3.97zM6.75 8.25a.75.75 0 01.75-.75h9a.75.75 0 010 1.5h-9a.75.75 0 01-.75-.75zm.75 2.25a.75.75 0 000 1.5H12a.75.75 0 000-1.5H7.5z" clipRule="evenodd" />
+                </svg>
+                Send Feedback
+              </a>
+            </div>
           </label>
         </label>
         <input
@@ -554,7 +583,6 @@ export default function Home({ foundleId, answerIndex, slideIndex }) {
                 className="text-blue-500"
               >@xiomoes</a>).
             </p>
-            <div className="divider my-0"></div>
             <a
               className="btn mx-auto my-3"
               href="mailto:chirp@birbstreet.com?subject=foundle%20feedback"
@@ -564,7 +592,7 @@ export default function Home({ foundleId, answerIndex, slideIndex }) {
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 mr-2">
                 <path fillRule="evenodd" d="M4.848 2.771A49.144 49.144 0 0112 2.25c2.43 0 4.817.178 7.152.52 1.978.292 3.348 2.024 3.348 3.97v6.02c0 1.946-1.37 3.678-3.348 3.97a48.901 48.901 0 01-3.476.383.39.39 0 00-.297.17l-2.755 4.133a.75.75 0 01-1.248 0l-2.755-4.133a.39.39 0 00-.297-.17 48.9 48.9 0 01-3.476-.384c-1.978-.29-3.348-2.024-3.348-3.97V6.741c0-1.946 1.37-3.68 3.348-3.97zM6.75 8.25a.75.75 0 01.75-.75h9a.75.75 0 010 1.5h-9a.75.75 0 01-.75-.75zm.75 2.25a.75.75 0 000 1.5H12a.75.75 0 000-1.5H7.5z" clipRule="evenodd" />
               </svg>
-              Share Feedback
+              Send Feedback
             </a>
           </label>
         </label>
