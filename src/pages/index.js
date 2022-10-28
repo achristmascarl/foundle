@@ -2,8 +2,11 @@ import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Image from 'next/future/image';
 import dynamic from 'next/dynamic';
+
 import { MongoClient } from 'mongodb'
 import Select, { components } from 'react-select';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+
 import { c, track, companies } from '../utils';
 import GuessResult from '../components/GuessResult';
 import FoundleCountdown from '../components/FoundleCountdown';
@@ -240,7 +243,7 @@ export default function Home({ foundleId, answerIndex, slideIndex }) {
   }
 
   function handleShareResults() {
-    navigator.clipboard.writeText(shareString);
+    // navigator.clipboard.writeText(shareString);
     setShowCopiedAlert(true);
     setTimeout(() => {
       setShowCopiedAlert(false);
@@ -330,15 +333,20 @@ export default function Home({ foundleId, answerIndex, slideIndex }) {
           </h3>
           {gameFinished && (
             <>
-              <button
-                className="btn mx-2 my-3"
-                onClick={handleShareResults}
+              <CopyToClipboard
+                text={shareString}
+                onCopy={() => handleShareResults()}
               >
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 mr-2">
-                  <path fillRule="evenodd" d="M15.75 4.5a3 3 0 11.825 2.066l-8.421 4.679a3.002 3.002 0 010 1.51l8.421 4.679a3 3 0 11-.729 1.31l-8.421-4.678a3 3 0 110-4.132l8.421-4.679a3 3 0 01-.096-.755z" clipRule="evenodd" />
-                </svg>
-                Share Results
-              </button>
+                <button
+                  className="btn mx-2 my-3"
+                // onClick={handleShareResults}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 mr-2">
+                    <path fillRule="evenodd" d="M15.75 4.5a3 3 0 11.825 2.066l-8.421 4.679a3.002 3.002 0 010 1.51l8.421 4.679a3 3 0 11-.729 1.31l-8.421-4.678a3 3 0 110-4.132l8.421-4.679a3 3 0 01-.096-.755z" clipRule="evenodd" />
+                  </svg>
+                  Share Results
+                </button>
+              </CopyToClipboard>
               <button
                 className="btn mx-2 my-3"
                 onClick={() => setModalOpenId(modalIDs.GameFinished)}
@@ -346,7 +354,7 @@ export default function Home({ foundleId, answerIndex, slideIndex }) {
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 mr-2">
                   <path fillRule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 01.67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 11-.671-1.34l.041-.022zM12 9a.75.75 0 100-1.5.75.75 0 000 1.5z" clipRule="evenodd" />
                 </svg>
-                Answer
+                Fun Facts
               </button>
             </>
           )}
@@ -473,15 +481,20 @@ export default function Home({ foundleId, answerIndex, slideIndex }) {
             })}
             <p className="py-4">time until next foundle: <FoundleCountdown /></p>
             <div className="w-full flex flex-col sm:flex-row space-between">
-              <button
-                className="btn mx-auto my-3"
-                onClick={handleShareResults}
+              <CopyToClipboard
+                text={shareString}
+                onCopy={() => handleShareResults()}
               >
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 mr-2">
-                  <path fillRule="evenodd" d="M15.75 4.5a3 3 0 11.825 2.066l-8.421 4.679a3.002 3.002 0 010 1.51l8.421 4.679a3 3 0 11-.729 1.31l-8.421-4.678a3 3 0 110-4.132l8.421-4.679a3 3 0 01-.096-.755z" clipRule="evenodd" />
-                </svg>
-                Share Results
-              </button>
+                <button
+                  className="btn mx-auto my-3"
+                // onClick={handleShareResults}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 mr-2">
+                    <path fillRule="evenodd" d="M15.75 4.5a3 3 0 11.825 2.066l-8.421 4.679a3.002 3.002 0 010 1.51l8.421 4.679a3 3 0 11-.729 1.31l-8.421-4.678a3 3 0 110-4.132l8.421-4.679a3 3 0 01-.096-.755z" clipRule="evenodd" />
+                  </svg>
+                  Share Results
+                </button>
+              </CopyToClipboard>
               <a
                 className="btn mx-auto my-3"
                 href="mailto:chirp@birbstreet.com?subject=foundle%20feedback"
