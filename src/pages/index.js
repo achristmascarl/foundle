@@ -22,6 +22,7 @@ export async function getStaticProps(context) {
   let foundleId = "0";
   let answerIndex = 0;
   let slideIndex = 0;
+  let client;
 
   let url = process.env.MONGO_URL;
   if (!url) {
@@ -30,8 +31,7 @@ export async function getStaticProps(context) {
     )
   }
   try {
-    const client = await MongoClient.connect(url);
-    // console.log(client);
+    client = await MongoClient.connect(url);
     const database = client.db("test");
     const foundles = database.collection("foundles");
     // console.log(foundles);
@@ -63,6 +63,8 @@ export async function getStaticProps(context) {
     console.log("error with mongodb: ");
     console.log(err);
     throw new Error(err)
+  } finally {
+    await client.close();
   }
 
   return {
@@ -290,6 +292,15 @@ export default function Home({ foundleId, answerIndex, slideIndex }) {
             </div>
           )}
         </div>
+        {foundleId === "0" && (
+          <div className="alert alert-warning shadow-lg mb-5 text-center">
+            <span>
+              foundle is currently on hiatus, so you may have already
+              seen the slide below. if you&apos;d like to see foundle
+              return, let us know by reaching out to chirp@birbstreet.com!
+            </span>
+          </div>
+        )}
         <div className="max-w-5xl mx-auto text-center">
           <div className="flex flex-row justify-center align-middle mb-1">
             <h1 className="text-3xl font-semibold">🧐 foundle</h1>
