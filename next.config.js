@@ -10,6 +10,7 @@ const nextConfig = {
     domains: [
       'foundle.s3.amazonaws.com',
     ],
+    unoptimized: true,
   },
 }
 
